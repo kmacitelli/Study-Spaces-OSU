@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,17 +58,20 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                         getActivity().invalidateOptionsMenu(); }
                     @Override
                     public void onConnectionSuspended(int i) {} }).build();
-            getMapAsync(this);
+
+        getMapAsync(this);
     }
 
     @Override
     public void onResume() {
+        Log.i("Map", "Map fragment OnResume called");
         super.onResume();
         setUpEula();
         findLocation(); }
 
     @Override
     public void onStart() {
+        Log.i("Map", "Map fragment OnStart called");
         getActivity().invalidateOptionsMenu();
         mApiClient.connect();
         super.onStart();
@@ -75,11 +79,13 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onStop() {
+        Log.i("Map", "Map fragment OnStop called");
         mApiClient.disconnect();
         super.onStop();
     }
 
     private void findLocation() {
+        Log.i("Map", "Map fragment findLocation called");
         updateLocationUI();
         if (hasLocationPermission()) {
             FusedLocationProviderClient locationProvider = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -101,6 +107,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private void setUpEula() {
+        Log.i("Map", "Map fragment setUpEula called");
         SharedPreferences mSettings = getActivity().getSharedPreferences(getString(R.string.prefs), 0);
         boolean isEulaAccepted = mSettings.getBoolean(getString(R.string.eula_accepted_key),
                 false);
@@ -111,11 +118,13 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.i("Map", "Map fragment OnCreateOptionsMenu called");
         inflater.inflate(R.menu.menu_showcurrentlocation, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("Map", "Map fragment OnOptionsItemsSelected called");
         switch (item.getItemId()) {
             case R.id.menu_showcurrentlocation:
                 Log.d(TAG, "Showing current location");
