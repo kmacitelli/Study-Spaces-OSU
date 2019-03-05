@@ -6,5 +6,12 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="eula_accepted_key">Map</string>
+    <string name="prefs">Map</string>
+    <string name="eula_title">Map</string>
+    <string name="eula">Map</string>
+    <string name="accept">Map</string>
+    <string name="decline">Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="show_location">Map</string>
 </resources>
