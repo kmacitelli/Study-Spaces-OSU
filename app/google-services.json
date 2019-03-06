@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "310089263648",
+    "firebase_url": "https://study-spaces-osu.firebaseio.com",
+    "project_id": "study-spaces-osu",
+    "storage_bucket": "study-spaces-osu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310089263648:android:5966f9f5a6dd742f",
+        "android_client_info": {
+          "package_name": "com.example.studyspacesosu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310089263648-t4ad5d7hcttpd2hs1vv34c8qpi1ob3rt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFRMdpE1JIP8Be0AhBZWJjKfd8DoRIUTI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
