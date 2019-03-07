@@ -10,9 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -46,10 +49,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private boolean mLocationPermissionGranted = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
         Log.i("Map OnCreate", "Map fragment OnCreate called");
-        super.onCreate(savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
+
+
+
         mApiClient= new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -60,6 +68,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                     public void onConnectionSuspended(int i) {} }).build();
 
         getMapAsync(this);
+
+        return inflater.inflate(R.layout.map, container, false);
     }
 
     @Override
