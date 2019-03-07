@@ -1,6 +1,5 @@
 package com.example.studyspacesosu;
 
-import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.Context;
@@ -8,6 +7,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
@@ -56,9 +57,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        
+        SupportMapFragment mapFragment = new MapsFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
     }
 
 
