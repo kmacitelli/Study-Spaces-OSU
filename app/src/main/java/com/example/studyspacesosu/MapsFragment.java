@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +38,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     //Taken from https://developers.google.com/maps/documentation/android-sdk/start
 
+    private MapView mView;
     private GoogleMap mMap;
     private GoogleApiClient mApiClient;
     private static final String[] LOCATION_PERMISSIONS = new String[] {
@@ -56,9 +58,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         super.onCreateView(inflater, container, savedInstanceState);
         setHasOptionsMenu(true);
 
-
-
-        mApiClient= new GoogleApiClient.Builder(getActivity())
+        mApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
@@ -67,9 +67,19 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                     @Override
                     public void onConnectionSuspended(int i) {} }).build();
 
-        getMapAsync(this);
+        //getMapAsync(this);
 
         return inflater.inflate(R.layout.map, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+
+        mView = (MapView) view.findViewById(R.id.map);
+        mView.onCreate(savedInstanceState);
+        mView.onResume();
+        mView.getMapAsync(this);
+
     }
 
     @Override
@@ -77,7 +87,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         Log.i("Map", "Map fragment OnResume called");
         super.onResume();
         setUpEula();
-        findLocation(); }
+        findLocation();
+    }
 
     @Override
     public void onStart() {
@@ -110,7 +121,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
-                        mLocation= (Location) task.getResult();
+                        mLocation = (Location) task.getResult();
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLocation.getLatitude(),
                                 mLocation.getLongitude()), 16));
                     } else { /* Disable Location */ }  }  }); }
@@ -151,12 +162,12 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSIONS: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length> 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted= true;}}}
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;}}}
         updateLocationUI();  }
 
      private void updateLocationUI() {
-        if (mMap== null) { return; }
+        if (mMap == null) { return; }
         try {
             if (mLocationPermissionGranted) {/* Enable location */ }
             else { /* Disable location, request permissions */  }
@@ -169,9 +180,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         mMap = googleMap;
 
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng ohio = new LatLng(40.0, -83.0);
+        LatLng ohio = new LatLng(39.9976095,-83.0117205);
         mMap.addMarker(new MarkerOptions().position(ohio).title("Ohio State University"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ohio));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ohio, 15));
         //mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
