@@ -125,6 +125,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLocation.getLatitude(),
                                 mLocation.getLongitude()), 16));
                     } else { /* Disable Location */ }  }  }); }
+        else{
+            requestPermissions(LOCATION_PERMISSIONS, 1);
+        }
     }
 
     private void setUpEula() {
@@ -151,7 +154,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 Log.d(TAG, "Showing current location");
                 if (hasLocationPermission()) {
                     findLocation(); }
-                else { /* Request permissions */ }
+                else {
+                    requestPermissions(LOCATION_PERMISSIONS, 1);
+                }
                 break; }
         return true;
     }
@@ -185,10 +190,12 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ohio, 15));
         //mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        updateLocationUI();
     }
 
     private boolean hasLocationPermission() {
         /**/
-        return true;
+        return mLocationPermissionGranted;
     }
 }
