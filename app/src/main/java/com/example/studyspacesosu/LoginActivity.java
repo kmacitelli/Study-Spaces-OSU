@@ -58,6 +58,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
     private UserRegistrationTask mAuthTaskRegistration = null;
 
+    private FirebaseUser mUser = null;
+
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -179,12 +181,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin(boolean registration) {
-        if (mAuthTask != null) {
-            return;
-        }
-        if (mAuthTaskRegistration != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -225,9 +221,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
 
             if (registration) {
+                if (mAuthTaskRegistration != null) {
+                    return;
+                }
                 mAuthTaskRegistration = new UserRegistrationTask(email, password);
                 mAuthTaskRegistration.execute((Void) null);
+                mEmailView.setText("");
+                mPasswordView.setText("");
             } else {
+                if (mAuthTask != null) {
+                    return;
+                }
                 mAuthTask = new UserLoginTask(email, password);
                 mAuthTask.execute((Void) null);
             }
@@ -334,6 +338,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
+    private void onSuccessfulLogin() {
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+        startActivity(intent);
+        finish();
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -359,36 +371,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         // Sign in success, update UI with the signed-in user's information
 
                         Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
-                        FirebaseUser user = mAuth.getCurrentUser();
+                        onSuccessfulLogin();
 
                     } else {
 
                         // If sign in fails, display a message to the user.
 
-                        Toast.makeText(LoginActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
 
                     }
                 }
             });
 
             return true;
+
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override
@@ -424,7 +427,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         // If sign in fails, display a message to the user.
 
-                        Toast.makeText(LoginActivity.this, "Registration failed.", Toast.LENGTH_SHORT).show();
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
 
                     }
                 }
@@ -437,13 +441,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                //finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override
