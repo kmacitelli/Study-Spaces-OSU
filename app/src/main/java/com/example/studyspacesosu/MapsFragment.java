@@ -1,6 +1,7 @@
 package com.example.studyspacesosu;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,13 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.MapView;
@@ -32,11 +38,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.support.constraint.Constraints.TAG;
 
 public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     //Taken from https://developers.google.com/maps/documentation/android-sdk/start
+
+    private FirebaseFirestore mDatabase;
 
     private MapView mView;
     private GoogleMap mMap;
@@ -67,7 +78,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                     @Override
                     public void onConnectionSuspended(int i) {} }).build();
 
-        //getMapAsync(this);
+        mDatabase = FirebaseFirestore.getInstance();
 
         return inflater.inflate(R.layout.map, container, false);
     }
@@ -179,12 +190,73 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         mMap = googleMap;
 
+        final Map<Marker, Map<String, Object>> markersMap = new HashMap<>();
+
+        mDatabase.collection("study area").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                Map<String, Object> markerData = new HashMap<>();
+
+                                GeoPoint location = (GeoPoint) document.get("Coordinates");
+                                double lat = location.getLatitude();
+                                double lng = location.getLongitude();
+                                LatLng pos = new LatLng(lat, lng);
+
+                                markerData.put("Name", document.get("Name"));
+                                markerData.put("Description", document.get("Description"));
+                                markerData.put("Coordinates", pos);
+                                markerData.put("Id", document.getId());
+
+                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title((String) document.get("Name")));
+                                markersMap.put(marker, markerData);
+
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
         // Add a marker in Sydney, Australia, and move the camera.
         LatLng ohio = new LatLng(39.9976095,-83.0117205);
-        mMap.addMarker(new MarkerOptions().position(ohio).title("Ohio State University"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ohio, 15));
         //mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Intent intent = new Intent();
+
+                double lat = latLng.latitude;
+                double lng = latLng.longitude;
+                intent.putExtra("latitude", lat);
+                intent.putExtra("longitude", lng);
+
+                intent.setClass(getContext(), AddSpaceActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                HashMap markerData = (HashMap) markersMap.get(marker);
+
+                Intent intent = new Intent();
+
+                intent.putExtra("DataMap", markerData);
+                intent.setClass(getContext(), EditSpaceActivity.class);
+                startActivity(intent);
+
+                return false;
+            }
+        });
     }
 
     private boolean hasLocationPermission() {
