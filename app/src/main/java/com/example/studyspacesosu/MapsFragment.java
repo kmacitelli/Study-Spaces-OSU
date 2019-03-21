@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -258,8 +259,17 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 Intent intent = new Intent();
 
                 intent.putExtra("DataMap", markerData);
-                intent.setClass(getContext(), EditSpaceActivity.class);
-                startActivity(intent);
+
+                FragmentManager fm = getFragmentManager();
+                SpaceInfoFragment spaceFragment = new SpaceInfoFragment();
+                fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
+
+
+
+                //intent.setClass(getContext(), EditSpaceActivity.class);
+                //intent.setClass(getContext(), SpaceInfoFragment.class);
+
+                //startActivity(intent);
 
                 return false;
             }
