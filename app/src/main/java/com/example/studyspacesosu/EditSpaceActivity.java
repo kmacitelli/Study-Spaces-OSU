@@ -75,7 +75,7 @@ public class EditSpaceActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EditSpaceActivity.this, "Area Edited Successfully.", Toast.LENGTH_SHORT).show();
                             }
                         });
 
