@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -256,20 +257,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                 HashMap markerData = (HashMap) markersMap.get(marker);
 
-                Intent intent = new Intent();
-
+                final Intent intent = new Intent();
                 intent.putExtra("DataMap", markerData);
+                intent.setClass(getContext(), EditSpaceActivity.class);
 
                 FragmentManager fm = getFragmentManager();
                 SpaceInfoFragment spaceFragment = new SpaceInfoFragment();
                 fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
 
-
-
-                //intent.setClass(getContext(), EditSpaceActivity.class);
-                //intent.setClass(getContext(), SpaceInfoFragment.class);
-
-                //startActivity(intent);
+                spaceFragment.setEditIntent(intent);
 
                 return false;
             }

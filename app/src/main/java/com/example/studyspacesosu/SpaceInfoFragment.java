@@ -35,8 +35,14 @@ public class SpaceInfoFragment extends Fragment {
     private Button mSubmitButton;
     private Button mDeleteButton;
     private FirebaseFirestore mDatabase;
+    static private Button editButton;
 
     private SpaceInfoViewModel mViewModel;
+    private ViewGroup mContainer;
+
+    View editSpaceView;
+
+    Intent editIntent;
 
 
 
@@ -50,9 +56,13 @@ public class SpaceInfoFragment extends Fragment {
 
         mDatabase = FirebaseFirestore.getInstance();
 
+        mContainer = container;
 
+        editSpaceView = inflater.inflate(R.layout.space_info_fragment, container, false);
 
-        return inflater.inflate(R.layout.space_info_fragment, container, false);
+        editButton = editSpaceView.findViewById(R.id.editButton);
+
+        return editSpaceView;
 
 
        // Intent callingIntent = getIntent();
@@ -112,6 +122,20 @@ public class SpaceInfoFragment extends Fragment {
 
 
 
+    }
+
+    public void setEditIntent(Intent mIntent){
+        editIntent = mIntent;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+        super.onViewCreated(view, savedInstanceState);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(editIntent);
+            }
+        });
     }
 
     @Override

@@ -22,6 +22,7 @@
     <string name="prompt_name">Name</string>
     <string name="delete">Delete</string>
     <string name="prompt_description">Description</string>
+    <string name="edit">Edit space</string>
 
     <!-- Strings related to Settings -->
 
