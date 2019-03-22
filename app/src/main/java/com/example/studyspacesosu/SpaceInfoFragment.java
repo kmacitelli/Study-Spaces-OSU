@@ -30,8 +30,8 @@ import java.util.Map;
 public class SpaceInfoFragment extends Fragment {
 
     private TextView mCoordinateView;
-    private EditText mAreaName;
-    private EditText mAreaDescription;
+    private TextView mAreaName;
+    private TextView mAreaDescription;
     private Button mSubmitButton;
     private Button mDeleteButton;
     private FirebaseFirestore mDatabase;
@@ -61,63 +61,19 @@ public class SpaceInfoFragment extends Fragment {
         editButton = editSpaceView.findViewById(R.id.editButton);
 
 
-        return editSpaceView;
 
 
-       // Intent callingIntent = getIntent();
-        /*final Map<String, Object> markerData = (HashMap<String, Object>) callingIntent.getSerializableExtra("DataMap");
+        Intent callingIntent = editIntent;
+        final Map<String, Object> markerData = (HashMap<String, Object>) callingIntent.getSerializableExtra("DataMap");
 
-        mCoordinateView = findViewById(R.id.coordinate_display);
-        mCoordinateView.setText("Coordinates: " + ((LatLng)markerData.get("Coordinates")).latitude + ", " + ((LatLng)markerData.get("Coordinates")).longitude);
-
-        mAreaName = findViewById(R.id.name_field);
+        mAreaName = editSpaceView.findViewById(R.id.spaceTitle);
         mAreaName.setText((String) markerData.get("Name"));
-        mAreaDescription = findViewById(R.id.description_field);
+        mAreaDescription = editSpaceView.findViewById(R.id.spaceDescription);
         mAreaDescription.setText((String)markerData.get("Description"));
 
-        mSubmitButton = findViewById(R.id.submit_area_add);
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Map<String, Object> updateData = new HashMap<>();
-                updateData.put("Name", mAreaName.getText().toString());
-                updateData.put("Description", mAreaDescription.getText().toString());
 
-                mDatabase.collection("study area").document((String) markerData.get("Id"))
-                        .update(updateData)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-            }
-        });
-
-        mDeleteButton = findViewById(R.id.delete_area_add);
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDatabase.collection("study area").document((String) markerData.get("Id"))
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("EditSpace", "DocumentSnapshot successfully deleted!");
-                                Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("EditSpace", "Error deleting document", e);
-                            }
-                        });
-
-            }
-        });*/
+        return editSpaceView;
 
 
 
