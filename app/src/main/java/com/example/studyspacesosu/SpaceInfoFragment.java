@@ -55,12 +55,11 @@ public class SpaceInfoFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         mDatabase = FirebaseFirestore.getInstance();
-
         mContainer = container;
-
         editSpaceView = inflater.inflate(R.layout.space_info_fragment, container, false);
 
         editButton = editSpaceView.findViewById(R.id.editButton);
+
 
         return editSpaceView;
 
