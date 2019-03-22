@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,9 +37,11 @@ public class SpaceInfoFragment extends Fragment {
     private Button mDeleteButton;
     private FirebaseFirestore mDatabase;
     static private Button editButton;
+    private Button xButton;
 
     private SpaceInfoViewModel mViewModel;
     private ViewGroup mContainer;
+    private Fragment mFragment;
 
     View editSpaceView;
 
@@ -59,8 +62,7 @@ public class SpaceInfoFragment extends Fragment {
         editSpaceView = inflater.inflate(R.layout.space_info_fragment, container, false);
 
         editButton = editSpaceView.findViewById(R.id.editButton);
-
-
+        xButton = editSpaceView.findViewById(R.id.infoExitButton);
 
 
         Intent callingIntent = editIntent;
@@ -71,11 +73,9 @@ public class SpaceInfoFragment extends Fragment {
         mAreaDescription = editSpaceView.findViewById(R.id.spaceDescription);
         mAreaDescription.setText((String)markerData.get("Description"));
 
-
+        mFragment = this;
 
         return editSpaceView;
-
-
 
     }
 
@@ -86,9 +86,17 @@ public class SpaceInfoFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
+
         editButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(editIntent);
+            }
+        });
+
+        xButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().remove(mFragment).commit();
             }
         });
     }

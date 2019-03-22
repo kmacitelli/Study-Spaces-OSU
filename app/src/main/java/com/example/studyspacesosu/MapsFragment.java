@@ -63,6 +63,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private boolean mLocationPermissionGranted = false;
 
+    private SpaceInfoFragment currentSpaceInfoFrag;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -263,6 +265,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                 FragmentManager fm = getFragmentManager();
                 SpaceInfoFragment spaceFragment = new SpaceInfoFragment();
+                currentSpaceInfoFrag = spaceFragment;
                 fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
 
                 spaceFragment.setEditIntent(intent);
@@ -270,6 +273,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 return false;
             }
         });
+    }
+
+    public void removeInfoView(){
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().detach(currentSpaceInfoFrag);
     }
 
     private boolean hasLocationPermission() {
