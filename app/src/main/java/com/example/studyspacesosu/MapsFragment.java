@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -60,6 +62,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private LatLng mDefaultLocation;
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private boolean mLocationPermissionGranted = false;
+
+    private SpaceInfoFragment currentSpaceInfoFrag;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -255,15 +259,25 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                 HashMap markerData = (HashMap) markersMap.get(marker);
 
-                Intent intent = new Intent();
-
+                final Intent intent = new Intent();
                 intent.putExtra("DataMap", markerData);
                 intent.setClass(getContext(), EditSpaceActivity.class);
-                startActivity(intent);
+
+                FragmentManager fm = getFragmentManager();
+                SpaceInfoFragment spaceFragment = new SpaceInfoFragment();
+                currentSpaceInfoFrag = spaceFragment;
+                fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
+
+                spaceFragment.setEditIntent(intent);
 
                 return false;
             }
         });
+    }
+
+    public void removeInfoView(){
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().detach(currentSpaceInfoFrag);
     }
 
     private boolean hasLocationPermission() {

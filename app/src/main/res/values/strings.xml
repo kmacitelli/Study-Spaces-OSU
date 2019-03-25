@@ -22,6 +22,9 @@
     <string name="prompt_name">Name</string>
     <string name="delete">Delete</string>
     <string name="prompt_description">Description</string>
+    <string name="edit">Edit space</string>
+    <string name="currTitle">Title here</string>
+    <string name="currDesc">Description Here</string>
 
     <!-- Strings related to Settings -->
 
