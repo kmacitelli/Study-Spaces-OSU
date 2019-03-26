@@ -74,6 +74,8 @@ public class SpaceInfoFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState){
+        Log.i("Info", "Space info onViewCreated called");
+
         super.onViewCreated(view, savedInstanceState);
 
         editButton.setOnClickListener(new View.OnClickListener() {

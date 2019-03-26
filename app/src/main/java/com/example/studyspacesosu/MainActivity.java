@@ -3,11 +3,11 @@ package com.example.studyspacesosu;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -25,11 +25,16 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
+
+
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,37 @@ public class MainActivity extends AppCompatActivity
         
         SupportMapFragment mapFragment = new MapsFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
+
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Intent intent = getIntent();
+        if (intent.hasExtra("DataMap")) {
+            // Launched from search results
+
+            Map<String, Object> markerData = (HashMap<String, Object>) intent.getSerializableExtra("DataMap");
+
+
+            Log.i("Main Got search results", "Got results" + markerData);
+
+            final Intent infoIntent = new Intent();
+            infoIntent.putExtra("DataMap", (HashMap) markerData);
+            infoIntent.setClass(getApplicationContext(), EditSpaceActivity.class);
+
+
+            FragmentManager fm = getSupportFragmentManager();
+
+            SpaceInfoFragment spaceFragment = new SpaceInfoFragment();
+            spaceFragment.setEditIntent(infoIntent);
+
+            fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
+
+        }
+
+
     }
 
 
@@ -139,4 +175,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }
