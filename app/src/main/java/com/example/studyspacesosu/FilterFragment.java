@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,7 +37,7 @@ public class FilterFragment extends Fragment {
     private ViewGroup mContainer;
     private Fragment mFragment;
 
-    View editSpaceView;
+    View filterView;
 
     Intent editIntent;
 
@@ -48,9 +50,18 @@ public class FilterFragment extends Fragment {
 
         mDatabase = FirebaseFirestore.getInstance();
         mContainer = container;
-        editSpaceView = inflater.inflate(R.layout.filter, container, false);
+        filterView = inflater.inflate(R.layout.filter, container, false);
 
-        xButton = editSpaceView.findViewById(R.id.filterExitButton);
+        xButton = filterView.findViewById(R.id.filterExitButton);
+
+        Spinner distanceSpinner = (Spinner) filterView.findViewById(R.id.distance_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.distances_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        distanceSpinner.setAdapter(adapter);
 
 
         //Intent callingIntent = editIntent;
@@ -58,7 +69,7 @@ public class FilterFragment extends Fragment {
 
         mFragment = this;
 
-        return editSpaceView;
+        return filterView;
 
     }
 
