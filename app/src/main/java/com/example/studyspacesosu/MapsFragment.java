@@ -276,6 +276,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
 
+
     private boolean hasLocationPermission() {
         /**/
         return mLocationPermissionGranted;

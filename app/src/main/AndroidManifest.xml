@@ -37,6 +37,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity
             android:name=".EditSpaceActivity"
             android:label="@string/title_activity_edit_space"
@@ -98,6 +99,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBKRdp2TX5qoVDd-V5T5pPwNyVkp0fJLic" />
+
+        <meta-data android:name="android.app.default_searchable"
+            android:value=".SearchableActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
