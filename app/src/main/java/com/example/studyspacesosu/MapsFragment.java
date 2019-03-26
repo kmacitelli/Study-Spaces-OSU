@@ -89,9 +89,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
+        Log.i("Map", "Map fragment OnViewCreated called");
         mView = (MapView) view.findViewById(R.id.map);
         mView.onCreate(savedInstanceState);
+        setUpEula();
+        findLocation();
         mView.onResume();
         mView.getMapAsync(this);
 
@@ -101,8 +103,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onResume() {
         Log.i("Map", "Map fragment OnResume called");
         super.onResume();
-        setUpEula();
-        findLocation();
     }
 
     @Override
@@ -275,10 +275,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         });
     }
 
-    public void removeInfoView(){
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction().detach(currentSpaceInfoFrag);
-    }
 
     private boolean hasLocationPermission() {
         /**/
