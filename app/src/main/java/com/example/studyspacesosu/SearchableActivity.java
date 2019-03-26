@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import java.lang.*;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,7 +51,6 @@ public class SearchableActivity extends AppCompatActivity {
         //Build intent from result in db
         //set edit intent with built intent in new space fragment
 
-        final Intent editIntent = new Intent();
         final Map<String, Object> markerData = new HashMap<>();
 
         markerData.put("Name", "Name not found");
@@ -65,7 +65,8 @@ public class SearchableActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.get("Name").equals(myQuery)){
+                                if (myQuery.equalsIgnoreCase((String) document.get("Name")) ||
+                                        ((String) ((String) document.get("Name")).toLowerCase()).contains(myQuery.toLowerCase())){
 
                                     //build intent from document
                                     GeoPoint location = (GeoPoint) document.get("Coordinates");
@@ -77,6 +78,14 @@ public class SearchableActivity extends AppCompatActivity {
                                     markerData.put("Description", document.get("Description"));
                                     markerData.put("Coordinates", pos);
                                     markerData.put("Id", document.getId());
+
+                                    //Create space info fragment with intent data
+                                    Intent mainIntent = new Intent();
+                                    mainIntent.putExtra("DataMap", (HashMap) markerData);
+                                    mainIntent.setClass(getApplicationContext(), MainActivity.class);
+                                    startActivity(mainIntent);
+                                    finish();
+
                                 }
                             }
                         } else {
