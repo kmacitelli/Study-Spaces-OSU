@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity
         
         SupportMapFragment mapFragment = new MapsFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
+
+
     }
 
     @Override
@@ -122,10 +124,20 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.filterButton){
+            Log.i("MainOnOptionsItemSelect", "Filter Button Clicked!");
+
+            final Intent intent = new Intent();
+            //intent.putExtra("DataMap", markerData);
+            //intent.setClass(getContext(), EditSpaceActivity.class);
+
+            FragmentManager fm = getSupportFragmentManager();
+            FilterFragment filterFragment = new FilterFragment();
+            fm.beginTransaction().add(R.id.infoSpace, filterFragment).commit();
         }
+
+        //noinspection SimplifiableIfStatement
+
 
         return super.onOptionsItemSelected(item);
     }

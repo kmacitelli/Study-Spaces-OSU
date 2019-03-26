@@ -25,6 +25,7 @@
     <string name="edit">Edit space</string>
     <string name="currTitle">Title here</string>
     <string name="currDesc">Description Here</string>
+    <string name="filter">Map Filter</string>
 
     <!-- Strings related to Settings -->
 
@@ -114,4 +115,8 @@
     <string name="title_activity_favorites">FavoritesActivity</string>
     <string name="title_activity_add_space">AddSpaceActivity</string>
     <string name="title_activity_edit_space">EditSpaceActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_filter">FilterActivity</string>
 </resources>
