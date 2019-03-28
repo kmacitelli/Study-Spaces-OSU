@@ -437,14 +437,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                             "Verification email sent to " + mRegisterUser.getEmail(),
                                             Toast.LENGTH_SHORT).show();
                                 else{
-                                    Log.e("Email", "sendEmailVerification", taskVerify.getException());
+
                                     Toast.makeText(LoginActivity.this,
                                             "Failed to send verification email.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-                                
+
 
                     } else {
 
