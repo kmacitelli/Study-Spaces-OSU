@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
@@ -40,6 +41,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -68,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private FirebaseAuth mAuth;
     private Button mEmailSignInButton;
     private Button mEmailRegisterButton;
+    private Button mGuestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,12 +243,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+
+        return email.contains("@osu.edu") || email.contains("@buckeyemail.osu.edu");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+
         return password.length() > 4;
     }
 
@@ -367,12 +371,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-
+                        FirebaseUser loggedUser= mAuth.getCurrentUser();
                         // Sign in success, update UI with the signed-in user's information
-
-                        Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
-                        onSuccessfulLogin();
-
+                        if(loggedUser.isEmailVerified()) {
+                            Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
+                            onSuccessfulLogin();
+                        }
+                        else{
+                            Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
 
                         // If sign in fails, display a message to the user.
@@ -418,10 +425,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-
+                        Toast.makeText(LoginActivity.this, "please check your email to verify account", Toast.LENGTH_SHORT).show();
                         // Sign in success, update UI with the signed-in user's information
+                        final FirebaseUser mRegisterUser=mAuth.getCurrentUser();
 
-                        Toast.makeText(LoginActivity.this, "Registration successful.", Toast.LENGTH_SHORT).show();
+                        mRegisterUser.sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> taskVerify) {
+                                if(taskVerify.isSuccessful())
+                                    Toast.makeText(LoginActivity.this,
+                                            "Verification email sent to " + mRegisterUser.getEmail(),
+                                            Toast.LENGTH_SHORT).show();
+                                else{
+                                    Log.e("Email", "sendEmailVerification", taskVerify.getException());
+                                    Toast.makeText(LoginActivity.this,
+                                            "Failed to send verification email.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                                Toast.makeText(LoginActivity.this, "Registration successful.", Toast.LENGTH_SHORT).show();
 
                     } else {
 
