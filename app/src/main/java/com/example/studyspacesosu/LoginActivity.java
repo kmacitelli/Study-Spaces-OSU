@@ -444,7 +444,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 }
                             }
                         });
-                                Toast.makeText(LoginActivity.this, "Registration successful.", Toast.LENGTH_SHORT).show();
+                                
 
                     } else {
 
