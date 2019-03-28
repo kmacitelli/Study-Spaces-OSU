@@ -36,10 +36,23 @@ public class FilterFragment extends Fragment {
     private SpaceInfoViewModel mViewModel;
     private ViewGroup mContainer;
     private Fragment mFragment;
+    private Spinner mDistanceSpinner;
 
     View filterView;
 
     Intent editIntent;
+
+    OnFilterUpdateListener callback;
+
+    public void setFilterUpdateListener(OnFilterUpdateListener callback) {
+        this.callback = callback;
+    }
+
+    public interface OnFilterUpdateListener {
+        public void onDistanceSelected(float distance);
+    }
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -62,10 +75,14 @@ public class FilterFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         distanceSpinner.setAdapter(adapter);
+        mDistanceSpinner = distanceSpinner;
 
 
         //Intent callingIntent = editIntent;
         //final Map<String, Object> markerData = (HashMap<String, Object>) callingIntent.getSerializableExtra("DataMap");
+
+
+
 
         mFragment = this;
 
@@ -85,6 +102,12 @@ public class FilterFragment extends Fragment {
 
         xButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
+                String distance = mDistanceSpinner.getSelectedItem().toString();
+                float distanceFloat = Float.parseFloat(distance.substring(0, 4));
+
+
+                callback.onDistanceSelected(distanceFloat);
+
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().remove(mFragment).commit();
             }
