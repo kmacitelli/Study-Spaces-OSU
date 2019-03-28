@@ -6,6 +6,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
     <string name="eula_accepted_key">Map</string>
     <string name="prefs">Preferences</string>
     <string name="eula_title">EULA</string>
@@ -27,6 +28,7 @@
     <string name="currDesc">Description Here</string>
     <string name="filter">Map Filter</string>
     <string name="distance">Distance: </string>
+    <string name="manage_account">Manage Account</string>
 
     <!-- Strings related to Settings -->
 

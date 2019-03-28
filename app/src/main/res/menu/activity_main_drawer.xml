@@ -35,4 +35,13 @@
         </menu>
     </item>
 
+    <item android:title="@string/manage_account">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_media_stop_light"
+                android:title="@string/action_logout"/>
+        </menu>
+    </item>
+
 </menu>
