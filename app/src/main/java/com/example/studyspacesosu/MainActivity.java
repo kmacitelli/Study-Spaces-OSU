@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -26,7 +27,25 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FilterFragment.OnFilterUpdateListener {
+
+    private MapsFragment mMapFrag;
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+            if (fragment instanceof FilterFragment) {
+            FilterFragment filterFragment = (FilterFragment) fragment;
+            filterFragment.setFilterUpdateListener(this);
+            }
+    }
+
+    public void onDistanceSelected(float distance) {
+        Log.i("Main Got search results", "Got distance" + distance);
+        SupportMapFragment mapFragment = new MapsFragment();
+        ((MapsFragment)mapFragment).setFilterDistance(distance);
+        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
+    }
+
 
 
     @Override
@@ -49,6 +68,9 @@ public class MainActivity extends AppCompatActivity
         
         SupportMapFragment mapFragment = new MapsFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
+        mMapFrag = (MapsFragment) mapFragment;
+
+
     }
 
     @Override
@@ -74,6 +96,14 @@ public class MainActivity extends AppCompatActivity
             spaceFragment.setEditIntent(infoIntent);
 
             fm.beginTransaction().add(R.id.infoSpace, spaceFragment).commit();
+
+        }
+        else if (intent.hasExtra("distance")){
+            Log.i("Main Got search results", "Got distance" + intent.getSerializableExtra("distance"));
+            SupportMapFragment mapFragment = new MapsFragment();
+            final float distance = (float) intent.getSerializableExtra("distance");
+            ((MapsFragment)mapFragment).setFilterDistance(distance);
+            getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
 
         }
 
@@ -122,10 +152,21 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.filterButton){
+            Log.i("MainOnOptionsItemSelect", "Filter Button Clicked!");
+
+            final Intent intent = new Intent();
+            //intent.putExtra("DataMap", markerData);
+            //intent.setClass(getContext(), EditSpaceActivity.class);
+
+            FragmentManager fm = getSupportFragmentManager();
+            FilterFragment filterFragment = new FilterFragment();
+            fm.beginTransaction().add(R.id.infoSpace, filterFragment).commit();
         }
+
+
+        //noinspection SimplifiableIfStatement
+
 
         return super.onOptionsItemSelected(item);
     }

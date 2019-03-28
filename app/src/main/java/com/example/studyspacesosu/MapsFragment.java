@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +46,7 @@ import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
 
+
 public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
 
     //Taken from https://developers.google.com/maps/documentation/android-sdk/start
@@ -64,6 +66,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private boolean mLocationPermissionGranted = false;
 
     private SpaceInfoFragment currentSpaceInfoFrag;
+    private boolean mReady = false;
+    private float mFilterDist = 999999.0f;
+    private int METERS_PER_MILE = 1609;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,6 +129,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     private void findLocation() {
         Log.i("Map", "Map fragment findLocation called");
+
         updateLocationUI();
         if (hasLocationPermission()) {
             FusedLocationProviderClient locationProvider = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -197,6 +205,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         Log.i("Map OnMapReady", "Map fragment OnMapReady called");
 
+        mDefaultLocation= new LatLng(40.0, -83.0);
+
+        if (mLocation == null){
+            mLocation = new Location(LocationManager.GPS_PROVIDER);
+            mLocation.setLatitude(mDefaultLocation.latitude);
+            mLocation.setLongitude(mDefaultLocation.longitude);
+        }
+
+        mReady = true;
+
         mMap = googleMap;
 
         final Map<Marker, Map<String, Object>> markersMap = new HashMap<>();
@@ -215,13 +233,21 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 double lng = location.getLongitude();
                                 LatLng pos = new LatLng(lat, lng);
 
-                                markerData.put("Name", document.get("Name"));
-                                markerData.put("Description", document.get("Description"));
-                                markerData.put("Coordinates", pos);
-                                markerData.put("Id", document.getId());
 
-                                Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title((String) document.get("Name")));
-                                markersMap.put(marker, markerData);
+                                float[] results = new float[1];
+                                Location.distanceBetween(lat, lng, mLocation.getLatitude(), mLocation.getLongitude(), results);
+                                float milesAway = results[0]/METERS_PER_MILE;
+
+                                if (milesAway < mFilterDist) {
+
+                                    markerData.put("Name", document.get("Name"));
+                                    markerData.put("Description", document.get("Description"));
+                                    markerData.put("Coordinates", pos);
+                                    markerData.put("Id", document.getId());
+
+                                    Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title((String) document.get("Name")));
+                                    markersMap.put(marker, markerData);
+                                }
 
                             }
                         } else {
@@ -275,6 +301,10 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         });
     }
 
+
+    public void setFilterDistance(float distance){
+        mFilterDist = distance;
+    }
 
 
     private boolean hasLocationPermission() {

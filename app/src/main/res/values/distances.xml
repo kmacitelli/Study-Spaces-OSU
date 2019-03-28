@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="distances_array">
+        <item>0.25 mile</item>
+        <item>0.50 mile</item>
+        <item>0.75 mile</item>
+        <item>1.00 mile</item>
+    </string-array>
+</resources>
