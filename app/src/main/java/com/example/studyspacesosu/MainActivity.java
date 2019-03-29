@@ -1,7 +1,6 @@
 package com.example.studyspacesosu;
 
 import android.app.SearchManager;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +27,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FilterFragment.OnFilterUpdateListener {
 
-    private MapsFragment mMapFrag;
+    private int mMapID;
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -44,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = new MapsFragment();
         ((MapsFragment)mapFragment).setFilterDistance(distance);
         getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
+        mMapID = mapFragment.getId();
     }
 
 
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity
         
         SupportMapFragment mapFragment = new MapsFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
-        mMapFrag = (MapsFragment) mapFragment;
+        mMapID = mapFragment.getId();
 
 
     }
@@ -162,6 +161,11 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fm = getSupportFragmentManager();
             FilterFragment filterFragment = new FilterFragment();
             fm.beginTransaction().add(R.id.infoSpace, filterFragment).commit();
+        }
+        else if (id == R.id.menu_showcurrentlocation){
+            Log.i("MainOnOptionsItemSelect", "Location Button Clicked!");
+            FragmentManager fm = getSupportFragmentManager();
+            ((MapsFragment)fm.findFragmentById(mMapID)).findLocation();
         }
 
 
