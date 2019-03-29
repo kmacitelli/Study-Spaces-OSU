@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -127,7 +126,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         super.onStop();
     }
 
-    private void findLocation() {
+    public void findLocation() {
         Log.i("Map", "Map fragment findLocation called");
 
         updateLocationUI();
@@ -309,6 +308,13 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     private boolean hasLocationPermission() {
         /**/
-        return mLocationPermissionGranted;
+
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        else{
+            return mLocationPermissionGranted;
+        }
     }
 }
