@@ -10,7 +10,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
-import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
@@ -39,9 +41,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import android.util.Log;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -72,13 +75,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Button mEmailSignInButton;
     private Button mEmailRegisterButton;
     private Button mGuestButton;
-
+    private FirebaseFirestore mDataBase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-
+        mDataBase= FirebaseFirestore.getInstance();
         setContentView(R.layout.activity_login);
         setupActionBar();
         // Set up the login form.
@@ -371,16 +374,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        FirebaseUser loggedUser= mAuth.getCurrentUser();
+                        final FirebaseUser loggedUser= mAuth.getCurrentUser();
+
                         // Sign in success, update UI with the signed-in user's information
-                        if(loggedUser.isEmailVerified()) {
-                            Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
-                            onSuccessfulLogin();
+                        final DocumentReference docRef = mDataBase.collection("users").document(loggedUser.getEmail());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String verified = document.get("verified").toString();
+                                    if(verified==("yes")) {
+                                        Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
+                                        onSuccessfulLogin();
+                                    }
+                                    else{
+                                        if(loggedUser.isEmailVerified()){
+                                            docRef.update("verified", "yes");
+                                            Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
+                                            onSuccessfulLogin();
+                                        }
+                                        else
+                                            Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                }
+                            });
                         }
-                        else{
-                            Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
+                    else {
 
                         // If sign in fails, display a message to the user.
 
@@ -428,7 +450,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         Toast.makeText(LoginActivity.this, "please check your email to verify account", Toast.LENGTH_SHORT).show();
                         // Sign in success, update UI with the signed-in user's information
                         final FirebaseUser mRegisterUser=mAuth.getCurrentUser();
-
+                        Map<String, Object> userInfo = new HashMap<>();
+                        userInfo.put("username", mRegisterUser.getEmail());
+                        userInfo.put("Favorites", new ArrayList<Object>());
+                        userInfo.put("Voted", new ArrayList<Object>());
+                        userInfo.put("Verified", "no");
+                        mDataBase.collection("user").document(mRegisterUser.getEmail()).set(userInfo);
                         mRegisterUser.sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> taskVerify) {
