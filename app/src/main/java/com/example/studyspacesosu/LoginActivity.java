@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -374,30 +375,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        final FirebaseUser loggedUser= mAuth.getCurrentUser();
+                        final FirebaseUser loggedUser = mAuth.getCurrentUser();
 
                         // Sign in success, update UI with the signed-in user's information
-                        final DocumentReference docRef = mDataBase.collection("users").document(loggedUser.getEmail());
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        mDataBase.collection("users").whereEqualTo("username", loggedUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    String verified = document.get("verified").toString();
-                                    if(verified==("yes")) {
+                                    List<DocumentSnapshot> docs = task.getResult().getDocuments();
+                                    String verified = docs.get(0).getString("verified");
+                                    if (verified == ("yes")) {
                                         Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                         onSuccessfulLogin();
-                                    }
-                                    else{
-                                        if(loggedUser.isEmailVerified()){
+                                    } else {
+                                        if (loggedUser.isEmailVerified()) {
                                             docRef.update("verified", "yes");
                                             Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                             onSuccessfulLogin();
-                                        }
-                                        else
+                                        } else
                                             Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
-                                        }
                                     }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+
 
                                 }
                             });
@@ -455,7 +460,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         userInfo.put("Favorites", new ArrayList<Object>());
                         userInfo.put("Voted", new ArrayList<Object>());
                         userInfo.put("Verified", "no");
-                        mDataBase.collection("user").document(mRegisterUser.getEmail()).set(userInfo);
+                        mDataBase.collection("user").add(userInfo);
                         mRegisterUser.sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> taskVerify) {
