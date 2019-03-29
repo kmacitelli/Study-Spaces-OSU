@@ -72,7 +72,9 @@ public class AddSpaceActivity extends AppCompatActivity {
 
                 GeoPoint point = new GeoPoint(mClickPosition.latitude, mClickPosition.longitude);
                 studyArea.put("Coordinates", point);
-
+                int rating =0;
+                studyArea.put("up rating",rating);
+                studyArea.put("down rating",rating);
                 mDatabase.collection("study area")
                         .add(studyArea)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
