@@ -378,18 +378,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         final FirebaseUser loggedUser = mAuth.getCurrentUser();
 
                         // Sign in success, update UI with the signed-in user's information
-                        mDataBase.collection("users").whereEqualTo("username", loggedUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        mDataBase.collection("user").whereEqualTo("username", loggedUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     List<DocumentSnapshot> docs = task.getResult().getDocuments();
+                                    DocumentReference docRef=mDataBase.collection("user").document(docs.get(0).getId());
                                     String verified = docs.get(0).getString("verified");
                                     if (verified == ("yes")) {
                                         Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                         onSuccessfulLogin();
                                     } else {
                                         if (loggedUser.isEmailVerified()) {
-                                            docRef.update("verified", "yes");
+                                            docRef.update("Verified", "yes");
                                             Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                             onSuccessfulLogin();
                                         } else
@@ -399,14 +400,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             }
                         });
                     }
-                }
-            });
-
-
-
-                                }
-                            });
-                        }
                     else {
 
                         // If sign in fails, display a message to the user.
@@ -417,6 +410,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                 }
             });
+
 
             return true;
 
