@@ -61,6 +61,11 @@ public class AddSpaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if(mAreaName.getText().toString().equals("")) {
+                    Toast.makeText(AddSpaceActivity.this, "Name must not be blank.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Map<String, Object> studyArea = new HashMap<>();
                 studyArea.put("Name", mAreaName.getText().toString());
                 studyArea.put("Description", mAreaDescription.getText().toString());

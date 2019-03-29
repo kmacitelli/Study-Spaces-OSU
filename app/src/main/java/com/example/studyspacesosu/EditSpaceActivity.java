@@ -58,6 +58,11 @@ public class EditSpaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if(mAreaName.getText().toString().equals("")) {
+                    Toast.makeText(EditSpaceActivity.this, "Name must not be blank.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Map<String, Object> updateData = new HashMap<>();
                 updateData.put("Name", mAreaName.getText().toString());
                 updateData.put("Description", mAreaDescription.getText().toString());
