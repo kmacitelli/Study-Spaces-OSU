@@ -86,6 +86,20 @@
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/down_arrow"
                 />
+            <TextView
+                android:id="@+id/downvotes"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/colorAccent"
+                />
+            <TextView
+                android:id="@+id/upvotes"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/colorPrimary"
+                />
         </LinearLayout>
 
     </LinearLayout>
