@@ -102,8 +102,8 @@ public class SpaceInfoFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<DocumentSnapshot> docs= task.getResult().getDocuments();
-                mUpVotes.setText(docs.get(0).getString("up rating"));
-                mDownVotes.setText(docs.get(0).getString("down rating"));
+                mUpVotes.setText(docs.get(0).get("up rating").toString());
+                mDownVotes.setText(docs.get(0).get("down rating").toString());
             }
         });
 
@@ -182,9 +182,9 @@ public class SpaceInfoFragment extends Fragment {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<DocumentSnapshot> docs= task.getResult().getDocuments();
                 DocumentReference doc = mDatabase.collection("study area").document(docs.get(0).getId());
-                int rating = (int) docs.get(0).get("up rating")+1;
+                int rating = Integer.parseInt(docs.get(0).get("up rating").toString())+1;
                 doc.update("up rating", rating);
-                mUpVotes.setText(rating);
+                mUpVotes.setText("" + rating);
                 mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -204,9 +204,9 @@ public class SpaceInfoFragment extends Fragment {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<DocumentSnapshot> docs= task.getResult().getDocuments();
                 DocumentReference doc = mDatabase.collection("study area").document(docs.get(0).getId());
-                int rating = (int) docs.get(0).get("down rating")+1;
+                int rating =  Integer.parseInt(docs.get(0).get("down rating").toString())+1;
                 doc.update("down rating", rating);
-                mDownVotes.setText(rating);
+                mDownVotes.setText("" + rating);
                 mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
