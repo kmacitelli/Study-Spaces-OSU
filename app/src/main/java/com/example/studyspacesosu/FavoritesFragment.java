@@ -109,13 +109,14 @@ public class FavoritesFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             mNames = new ArrayList<>();
+                            mNames.addAll(mPositions);
                             List<DocumentSnapshot> doc = task.getResult().getDocuments();
                             Iterator<DocumentSnapshot> docIter = doc.iterator();
                             while(docIter.hasNext()) {
                                 DocumentSnapshot currentDoc = docIter.next();
                                 if(mPositions.contains(currentDoc.getId())) {
                                     int index = mPositions.indexOf(currentDoc.getId());
-                                    mNames.add(index, (String) currentDoc.get("Name"));
+                                    mNames.set(index, (String) currentDoc.get("Name"));
                                 }
                             }
                             mList.setAdapter(new ArrayAdapter<>(getContext(), R.layout.favorite_list_item, mNames));
@@ -129,8 +130,6 @@ public class FavoritesFragment extends Fragment {
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Toast.makeText(getContext(),"Registered click on: " + position, Toast.LENGTH_LONG);
 
                 mDatabase.collection("study area").whereEqualTo(FieldPath.documentId(), mPositions.get(position)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -165,6 +164,12 @@ public class FavoritesFragment extends Fragment {
                 });
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // TODO: Update favorites list if changed from opening a fragment on the favorites page.
     }
 
     @Override

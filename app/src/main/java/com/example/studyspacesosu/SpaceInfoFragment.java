@@ -1,6 +1,7 @@
 package com.example.studyspacesosu;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,6 +48,7 @@ public class SpaceInfoFragment extends Fragment {
     private SpaceInfoViewModel mViewModel;
     private ViewGroup mContainer;
     private Fragment mFragment;
+    private Context mContext;
 
     View editSpaceView;
 
@@ -155,6 +158,7 @@ public class SpaceInfoFragment extends Fragment {
     }
 
     private void Favorite(){
+        mContext = getContext();
         mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -165,10 +169,12 @@ public class SpaceInfoFragment extends Fragment {
                     if(favs.contains(markerData.get("Id"))){
                         favs.remove(markerData.get("Id"));
                         doc.update("Favorites", favs);
+                        Toast.makeText(mContext, "Successfully removed " + markerData.get("Name") + " to favorites list.", Toast.LENGTH_LONG).show();
                     }
                     else if(favs.size()<9){
                         favs.add(markerData.get("Id"));
                         doc.update("Favorites", favs);
+                        Toast.makeText(mContext, "Successfully added " + markerData.get("Name") + " to favorites list.", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -177,6 +183,7 @@ public class SpaceInfoFragment extends Fragment {
         });
     }
     private void Up(){
+        mContext = getContext();
         mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -193,6 +200,7 @@ public class SpaceInfoFragment extends Fragment {
                         List<Object> votes = (List<Object>) docs.get(0).get("Voted");
                         votes.add(markerData.get("Id"));
                         doc.update("Voted", votes);
+                        Toast.makeText(mContext, "Successfully up-voted " + markerData.get("Name") + ".", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -201,6 +209,7 @@ public class SpaceInfoFragment extends Fragment {
         upButton.setVisibility(View.GONE);
     }
     private void Down(){
+        mContext = getContext();
         mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -217,6 +226,7 @@ public class SpaceInfoFragment extends Fragment {
                         List<Object> votes = (List<Object>) docs.get(0).get("Voted");
                         votes.add(markerData.get("Id"));
                         doc.update("Voted", votes);
+                        Toast.makeText(mContext, "Successfully down-voted " + markerData.get("Name") + ".", Toast.LENGTH_LONG).show();
                     }
                 });
             }
