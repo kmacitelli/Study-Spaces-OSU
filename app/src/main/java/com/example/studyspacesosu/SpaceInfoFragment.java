@@ -197,7 +197,7 @@ public class SpaceInfoFragment extends Fragment {
                 });
             }
         });
-        downButton.setVisibility(View.GONE)
+        downButton.setVisibility(View.GONE);
         upButton.setVisibility(View.GONE);
     }
     private void Down(){
