@@ -51,7 +51,7 @@ public class SearchableActivity extends AppCompatActivity {
         //Build intent from result in db
         //set edit intent with built intent in new space fragment
 
-        final Map<String, Object> markerData = new HashMap<>();
+        final HashMap<String, Object> markerData = new HashMap<>();
 
         markerData.put("Name", "Name not found");
         markerData.put("Description", "Description not found");
@@ -93,18 +93,6 @@ public class SearchableActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-
-        //Create space info fragment with intent data
-        Intent mainIntent = new Intent();
-        mainIntent.putExtra("DataMap", (HashMap) markerData);
-        mainIntent.setClass(getApplicationContext(), MainActivity.class);
-        startActivity(mainIntent);
-        finish();
-
-
     }
 
 }
