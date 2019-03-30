@@ -98,12 +98,12 @@ public class SpaceInfoFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-        mDatabase.collection("study area").whereEqualTo("Name",(String) markerData.get("Name")).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> docs= task.getResult().getDocuments();
-                mUpVotes.setText(docs.get(0).get("up rating").toString());
-                mDownVotes.setText(docs.get(0).get("down rating").toString());
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot docs = task.getResult();
+                mUpVotes.setText(docs.get("up rating").toString());
+                mDownVotes.setText(docs.get("down rating").toString());
             }
         });
 
@@ -162,12 +162,12 @@ public class SpaceInfoFragment extends Fragment {
                 DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
                 List<Object> favs = (List<Object>) docs.get(0).get("Favorites");
                 if(favs.size()<10){
-                    if(favs.contains(markerData.get("Name"))){
-                        favs.remove(markerData.get("Name"));
+                    if(favs.contains(markerData.get("Id"))){
+                        favs.remove(markerData.get("Id"));
                         doc.update("Favorites", favs);
                     }
                     else if(favs.size()<9){
-                        favs.add(markerData.get("Name"));
+                        favs.add(markerData.get("Id"));
                         doc.update("Favorites", favs);
                     }
 
@@ -177,21 +177,21 @@ public class SpaceInfoFragment extends Fragment {
         });
     }
     private void Up(){
-        mDatabase.collection("study area").whereEqualTo("Name", markerData.get("Name")).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> docs= task.getResult().getDocuments();
-                DocumentReference doc = mDatabase.collection("study area").document(docs.get(0).getId());
-                int rating = Integer.parseInt(docs.get(0).get("up rating").toString())+1;
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot docs = task.getResult();
+                DocumentReference doc = mDatabase.collection("study area").document(docs.getId());
+                int rating = Integer.parseInt(docs.get("up rating").toString())+1;
                 doc.update("up rating", rating);
                 mUpVotes.setText("" + rating);
                 mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List<DocumentSnapshot> docs= task.getResult().getDocuments();
+                        List<DocumentSnapshot> docs = task.getResult().getDocuments();
                         DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
                         List<Object> votes = (List<Object>) docs.get(0).get("Voted");
-                        votes.add(markerData.get("Name"));
+                        votes.add(markerData.get("Id"));
                         doc.update("Voted", votes);
                     }
                 });
@@ -201,12 +201,12 @@ public class SpaceInfoFragment extends Fragment {
         upButton.setVisibility(View.GONE);
     }
     private void Down(){
-        mDatabase.collection("study area").whereEqualTo("Name", markerData.get("Name")).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> docs= task.getResult().getDocuments();
-                DocumentReference doc = mDatabase.collection("study area").document(docs.get(0).getId());
-                int rating =  Integer.parseInt(docs.get(0).get("down rating").toString())+1;
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot docs = task.getResult();
+                DocumentReference doc = mDatabase.collection("study area").document(docs.getId());
+                int rating =  Integer.parseInt(docs.get("down rating").toString())+1;
                 doc.update("down rating", rating);
                 mDownVotes.setText("" + rating);
                 mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -215,7 +215,7 @@ public class SpaceInfoFragment extends Fragment {
                         List<DocumentSnapshot> docs= task.getResult().getDocuments();
                         DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
                         List<Object> votes = (List<Object>) docs.get(0).get("Voted");
-                        votes.add(markerData.get("Name"));
+                        votes.add(markerData.get("Id"));
                         doc.update("Voted", votes);
                     }
                 });
