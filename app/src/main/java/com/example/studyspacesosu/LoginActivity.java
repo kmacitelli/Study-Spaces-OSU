@@ -383,7 +383,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     List<DocumentSnapshot> docs = task.getResult().getDocuments();
-                                    DocumentReference docRef=mDataBase.collection("user").document(docs.get(0).getId());
+                                    DocumentReference docRef = mDataBase.collection("user").document(docs.get(0).getId());
                                     String verified = docs.get(0).getString("verified");
                                     if (verified == ("yes")) {
                                         Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();

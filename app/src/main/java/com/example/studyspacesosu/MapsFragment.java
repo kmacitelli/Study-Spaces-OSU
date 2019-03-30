@@ -144,8 +144,10 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         mLocation = (Location) task.getResult();
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLocation.getLatitude(),
-                                mLocation.getLongitude()), 16));
+                        if(mLocation != null) {
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLocation.getLatitude(),
+                                    mLocation.getLongitude()), 16));
+                        }
                     } else { /* Disable Location */ }  }  }); }
         else{
             requestPermissions(LOCATION_PERMISSIONS, 1);
@@ -206,12 +208,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         mDefaultLocation= new LatLng(40.0, -83.0);
 
-        if (mLocation == null){
-            mLocation = new Location(LocationManager.GPS_PROVIDER);
-            mLocation.setLatitude(mDefaultLocation.latitude);
-            mLocation.setLongitude(mDefaultLocation.longitude);
-        }
-
         mReady = true;
 
         mMap = googleMap;
@@ -232,12 +228,21 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 double lng = location.getLongitude();
                                 LatLng pos = new LatLng(lat, lng);
 
+                                Boolean checkedLocationNull = false;
+
+                                if (mLocation == null){
+                                    mLocation = new Location(LocationManager.GPS_PROVIDER);
+                                    mLocation.setLatitude(mDefaultLocation.latitude);
+                                    mLocation.setLongitude(mDefaultLocation.longitude);
+                                    checkedLocationNull = true;
+                                }
+
 
                                 float[] results = new float[1];
                                 Location.distanceBetween(lat, lng, mLocation.getLatitude(), mLocation.getLongitude(), results);
                                 float milesAway = results[0]/METERS_PER_MILE;
 
-                                if (milesAway < mFilterDist) {
+                                if (!checkedLocationNull && milesAway < mFilterDist) {
 
                                     markerData.put("Name", document.get("Name"));
                                     markerData.put("Description", document.get("Description"));
