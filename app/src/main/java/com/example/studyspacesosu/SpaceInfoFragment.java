@@ -197,6 +197,8 @@ public class SpaceInfoFragment extends Fragment {
                 });
             }
         });
+        downButton.setVisibility(View.GONE)
+        upButton.setVisibility(View.GONE);
     }
     private void Down(){
         mDatabase.collection("study area").whereEqualTo("Name", markerData.get("Name")).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -219,6 +221,8 @@ public class SpaceInfoFragment extends Fragment {
                 });
             }
         });
+        downButton.setVisibility(View.GONE);
+        upButton.setVisibility(View.GONE);
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
