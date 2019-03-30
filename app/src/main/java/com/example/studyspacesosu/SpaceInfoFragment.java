@@ -131,7 +131,7 @@ public class SpaceInfoFragment extends Fragment {
                 List<DocumentSnapshot> docs= task.getResult().getDocuments();
                 DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
                 List<Object> votes = (List<Object>) docs.get(0).get("Voted");
-                if(votes.contains(markerData.get("Name"))){
+                if(votes.contains(markerData.get("Id"))){
                     downButton.setVisibility(View.GONE);
                     upButton.setVisibility(View.GONE);
                 }
