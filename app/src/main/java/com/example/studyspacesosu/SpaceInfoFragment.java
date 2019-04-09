@@ -155,6 +155,8 @@ public class SpaceInfoFragment extends Fragment {
             }
         });
 
+        checkFavorites();
+
     }
 
     private void Favorite(){
@@ -165,15 +167,18 @@ public class SpaceInfoFragment extends Fragment {
                 List<DocumentSnapshot> docs= task.getResult().getDocuments();
                 DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
                 List<Object> favs = (List<Object>) docs.get(0).get("Favorites");
+                favoriteButton = editSpaceView.findViewById(R.id.favoriteButton);
                 if(favs.size()<10){
                     if(favs.contains(markerData.get("Id"))){
                         favs.remove(markerData.get("Id"));
                         doc.update("Favorites", favs);
-                        Toast.makeText(mContext, "Successfully removed " + markerData.get("Name") + " to favorites list.", Toast.LENGTH_LONG).show();
+                        favoriteButton.setBackgroundResource(R.drawable.heart_unfilled);
+                        Toast.makeText(mContext, "Successfully removed " + markerData.get("Name") + " from favorites list.", Toast.LENGTH_LONG).show();
                     }
                     else if(favs.size()<9){
                         favs.add(markerData.get("Id"));
                         doc.update("Favorites", favs);
+                        favoriteButton.setBackgroundResource(R.drawable.heart_filled);
                         Toast.makeText(mContext, "Successfully added " + markerData.get("Name") + " to favorites list.", Toast.LENGTH_LONG).show();
                     }
 
@@ -182,6 +187,33 @@ public class SpaceInfoFragment extends Fragment {
             }
         });
     }
+
+    private void checkFavorites(){
+        mContext = getContext();
+        mDatabase.collection("user").whereEqualTo("username", mUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> docs= task.getResult().getDocuments();
+                boolean result;
+                DocumentReference doc = mDatabase.collection("user").document(docs.get(0).getId());
+                List<Object> favs = (List<Object>) docs.get(0).get("Favorites");
+                favoriteButton = editSpaceView.findViewById(R.id.favoriteButton);
+                if(favs.size()<10){
+                    if(favs.contains(markerData.get("Id"))){
+                        favoriteButton.setBackgroundResource(R.drawable.heart_filled);
+                    }
+                    else if(favs.size()<9){
+                        favoriteButton.setBackgroundResource(R.drawable.heart_unfilled);
+                    }
+
+                }
+
+            }
+        });
+
+
+    }
+
     private void Up(){
         mContext = getContext();
         mDatabase.collection("study area").document((String) markerData.get("Id")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
