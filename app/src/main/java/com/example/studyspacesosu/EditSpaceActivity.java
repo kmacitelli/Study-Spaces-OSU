@@ -46,7 +46,7 @@ public class EditSpaceActivity extends AppCompatActivity {
         final Map<String, Object> markerData = (HashMap<String, Object>) callingIntent.getSerializableExtra("DataMap");
 
         mCoordinateView = findViewById(R.id.coordinate_display);
-        mCoordinateView.setText("Coordinates: " + ((LatLng)markerData.get("Coordinates")).latitude + ", " + ((LatLng)markerData.get("Coordinates")).longitude);
+        mCoordinateView.setText("Coordinates: " + String.format("%.4f", ((LatLng)markerData.get("Coordinates")).latitude) + ", " + String.format("%.4f", ((LatLng)markerData.get("Coordinates")).longitude));
 
         mAreaName = findViewById(R.id.name_field);
         mAreaName.setText((String) markerData.get("Name"));

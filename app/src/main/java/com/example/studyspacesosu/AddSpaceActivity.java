@@ -50,7 +50,7 @@ public class AddSpaceActivity extends AppCompatActivity {
         mClickPosition = new LatLng(lat, lng);
 
         mCoordinateView = findViewById(R.id.coordinate_display);
-        mCoordinateView.setText("Coordinates: " + mClickPosition.latitude + ", " + mClickPosition.longitude);
+        mCoordinateView.setText("Coordinates: " + String.format("%.4f", mClickPosition.latitude) + ", " + String.format("%.4f", mClickPosition.longitude));
 
         mAreaName = findViewById(R.id.name_field);
         mAreaDescription = findViewById(R.id.description_field);

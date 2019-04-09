@@ -39,7 +39,7 @@
         </activity>
         <activity
             android:name=".EditSpaceActivity"
-            android:label="@string/title_activity_edit_space"
+            android:label="Edit Study Space"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -48,7 +48,7 @@
         </activity>
         <activity
             android:name=".AddSpaceActivity"
-            android:label="@string/title_activity_add_space"
+            android:label="Add Study Space"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -57,7 +57,7 @@
         </activity>
         <activity
             android:name=".FavoritesActivity"
-            android:label="@string/title_activity_favorites"
+            android:label="Favorites"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
