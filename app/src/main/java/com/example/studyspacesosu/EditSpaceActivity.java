@@ -1,6 +1,9 @@
 package com.example.studyspacesosu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -58,24 +61,32 @@ public class EditSpaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(mAreaName.getText().toString().equals("")) {
-                    Toast.makeText(EditSpaceActivity.this, "Name must not be blank.", Toast.LENGTH_SHORT).show();
-                    return;
+                ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = manager.getActiveNetworkInfo();
+
+                if (netInfo != null && netInfo.isConnected()) {
+
+                    if (mAreaName.getText().toString().equals("")) {
+                        Toast.makeText(EditSpaceActivity.this, "Name must not be blank.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Map<String, Object> updateData = new HashMap<>();
+                    updateData.put("Name", mAreaName.getText().toString());
+                    updateData.put("Description", mAreaDescription.getText().toString());
+
+                    mDatabase.collection("study area").document((String) markerData.get("Id"))
+                            .update(updateData)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(EditSpaceActivity.this, "Area Edited Successfully.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                } else {
+                    Toast.makeText(EditSpaceActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
                 }
-
-                Map<String, Object> updateData = new HashMap<>();
-                updateData.put("Name", mAreaName.getText().toString());
-                updateData.put("Description", mAreaDescription.getText().toString());
-
-                mDatabase.collection("study area").document((String) markerData.get("Id"))
-                        .update(updateData)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(EditSpaceActivity.this, "Area Edited Successfully.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
             }
         });
 
@@ -83,22 +94,31 @@ public class EditSpaceActivity extends AppCompatActivity {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.collection("study area").document((String) markerData.get("Id"))
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("EditSpace", "DocumentSnapshot successfully deleted!");
-                                Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("EditSpace", "Error deleting document", e);
-                            }
-                        });
 
+                ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = manager.getActiveNetworkInfo();
+
+                if (netInfo != null && netInfo.isConnected()) {
+
+                    mDatabase.collection("study area").document((String) markerData.get("Id"))
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("EditSpace", "DocumentSnapshot successfully deleted!");
+                                    Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("EditSpace", "Error deleting document", e);
+                                }
+                            });
+
+                } else {
+                    Toast.makeText(EditSpaceActivity.this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

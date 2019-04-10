@@ -3,8 +3,11 @@ package com.example.studyspacesosu;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -77,6 +80,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Button mEmailRegisterButton;
     private Button mGuestButton;
     private FirebaseFirestore mDataBase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,20 +232,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
 
-            if (registration) {
-                if (mAuthTaskRegistration != null) {
-                    return;
+            ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = manager.getActiveNetworkInfo();
+
+            if(netInfo != null && netInfo.isConnected()) {
+
+                if (registration) {
+                    if (mAuthTaskRegistration != null) {
+                        return;
+                    }
+                    mAuthTaskRegistration = new UserRegistrationTask(email, password);
+                    mAuthTaskRegistration.execute((Void) null);
+                    mEmailView.setText("");
+                    mPasswordView.setText("");
+                } else {
+                    if (mAuthTask != null) {
+                        return;
+                    }
+                    mAuthTask = new UserLoginTask(email, password);
+                    mAuthTask.execute((Void) null);
                 }
-                mAuthTaskRegistration = new UserRegistrationTask(email, password);
-                mAuthTaskRegistration.execute((Void) null);
-                mEmailView.setText("");
-                mPasswordView.setText("");
             } else {
-                if (mAuthTask != null) {
-                    return;
-                }
-                mAuthTask = new UserLoginTask(email, password);
-                mAuthTask.execute((Void) null);
+                Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                showProgress(false);
             }
         }
     }
@@ -393,24 +406,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                             docRef.update("Verified", "yes");
                                             Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                             onSuccessfulLogin();
-                                        } else
+                                        } else {
                                             Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
                             }
                         });
-                    }
-                    else {
+                    } else {
 
-                        // If sign in fails, display a message to the user.
+                            // If sign in fails, display a message to the user.
 
-                        mPasswordView.setError(getString(R.string.error_incorrect_password));
-                        mPasswordView.requestFocus();
-
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
                     }
                 }
             });
-
 
             return true;
 
