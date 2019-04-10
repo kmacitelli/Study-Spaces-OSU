@@ -408,6 +408,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                             onSuccessfulLogin();
                                         } else {
                                             Toast.makeText(LoginActivity.this, "This email is not yet verified, please verify it and try again", Toast.LENGTH_SHORT).show();
+                                            showProgress(false);
                                         }
                                     }
                                 }
@@ -430,7 +431,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
         }
 
         @Override
@@ -469,15 +469,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         mRegisterUser.sendEmailVerification().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> taskVerify) {
-                                if(taskVerify.isSuccessful())
+                                if(taskVerify.isSuccessful()) {
                                     Toast.makeText(LoginActivity.this,
                                             "Verification email sent to " + mRegisterUser.getEmail(),
                                             Toast.LENGTH_SHORT).show();
-                                else{
+                                    showProgress(false);
+                                } else {
 
                                     Toast.makeText(LoginActivity.this,
                                             "Failed to send verification email.",
                                             Toast.LENGTH_SHORT).show();
+                                    showProgress(false);
                                 }
                             }
                         });
@@ -500,7 +502,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
         }
 
         @Override
