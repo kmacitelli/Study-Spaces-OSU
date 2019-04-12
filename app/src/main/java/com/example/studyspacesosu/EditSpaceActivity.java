@@ -71,7 +71,7 @@ public class EditSpaceActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Map<String, Object> updateData = new HashMap<>();
+                    final Map<String, Object> updateData = new HashMap<>();
                     updateData.put("Name", mAreaName.getText().toString());
                     updateData.put("Description", mAreaDescription.getText().toString());
 
@@ -81,6 +81,17 @@ public class EditSpaceActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(EditSpaceActivity.this, "Area Edited Successfully.", Toast.LENGTH_SHORT).show();
+
+                                    Map<String, Object> updatedInfo = new HashMap<>(markerData);
+
+                                    updatedInfo.put("Name", updateData.get("Name"));
+                                    updatedInfo.put("Description", updateData.get("Description"));
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("DataMap", (HashMap) updatedInfo);
+
+                                    setResult(1, intent);
+                                    finish();
                                 }
                             });
 
@@ -107,6 +118,10 @@ public class EditSpaceActivity extends AppCompatActivity {
                                 public void onSuccess(Void aVoid) {
                                     Log.d("EditSpace", "DocumentSnapshot successfully deleted!");
                                     Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
+
+                                    setResult(0);
+                                    finish();
+
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

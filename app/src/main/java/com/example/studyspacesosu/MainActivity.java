@@ -209,5 +209,16 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void refreshMap() {
+        SupportMapFragment mapFragment = new MapsFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
+    }
+
+    public void refreshInfo(Intent data) {
+        FragmentManager fm = getSupportFragmentManager();
+        SpaceInfoFragment newFragment = new SpaceInfoFragment();
+        newFragment.setEditIntent(data);
+        fm.beginTransaction().add(R.id.infoSpace, newFragment).commit();
+    }
 
 }
