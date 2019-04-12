@@ -32,8 +32,11 @@ public class MainActivity extends AppCompatActivity
 
     private int mMapID;
     private NavigationView mNavView;
+    private DrawerLayout mDrawer;
     private Toolbar mToolbar;
     private MapsFragment mMapFrag;
+
+    static final String STORE_MAPFRAG = "MapFragment1";
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -45,10 +48,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onDistanceSelected(float distance) {
         Log.i("Main Got search results", "Got distance" + distance);
-        SupportMapFragment mapFragment = new MapsFragment();
-        ((MapsFragment)mapFragment).setFilterDistance(distance);
-        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
-        mMapID = mapFragment.getId();
+        getSupportFragmentManager().beginTransaction().remove(mMapFrag).commit();
+        mMapFrag = new MapsFragment();
+        mMapFrag.setFilterDistance(distance);
+        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag, "Map_Frag_Tag").commit();
+        mMapID = mMapFrag.getId();
     }
 
 
@@ -62,20 +66,24 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
         mNavView = (NavigationView) findViewById(R.id.nav_view);
         mNavView.setNavigationItemSelectedListener(this);
-        
-        mMapFrag = new MapsFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag).commit();
-        mMapID = mMapFrag.getId();
 
-
+        if(savedInstanceState == null) {
+            mMapFrag = new MapsFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag, "Map_Frag_Tag").commit();
+            mMapID = mMapFrag.getId();
+        } else {
+            String mapTag = savedInstanceState.getString(STORE_MAPFRAG);
+            mMapFrag = (MapsFragment) getSupportFragmentManager().findFragmentByTag(mapTag);
+            mMapID = mMapFrag.getId();
+        }
     }
 
     @Override
@@ -105,10 +113,11 @@ public class MainActivity extends AppCompatActivity
         }
         else if (intent.hasExtra("distance")){
             Log.i("Main Got search results", "Got distance" + intent.getSerializableExtra("distance"));
-            SupportMapFragment mapFragment = new MapsFragment();
+            getSupportFragmentManager().beginTransaction().remove(mMapFrag).commit();
+            mMapFrag = new MapsFragment();
             final float distance = (float) intent.getSerializableExtra("distance");
-            ((MapsFragment)mapFragment).setFilterDistance(distance);
-            getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
+            mMapFrag.setFilterDistance(distance);
+            getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag, "Map_Frag_Tag").commit();
 
         }
 
@@ -175,13 +184,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.menu_showcurrentlocation){
             Log.i("MainOnOptionsItemSelect", "Location Button Clicked!");
-            FragmentManager fm = getSupportFragmentManager();
-            ((MapsFragment)fm.findFragmentById(mMapID)).findLocation();
+            mMapFrag.findLocation();
         }
-
-
-        //noinspection SimplifiableIfStatement
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -217,9 +221,19 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if(mMapFrag != null) {
+            savedInstanceState.putString(STORE_MAPFRAG, mMapFrag.getTag());
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     public void refreshMap() {
         getSupportFragmentManager().beginTransaction().remove(mMapFrag).commit();
         mMapFrag = new MapsFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mMapFrag).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag, "Map_Frag_Tag").commit();
+        mMapID = mMapFrag.getId();
     }
 }
