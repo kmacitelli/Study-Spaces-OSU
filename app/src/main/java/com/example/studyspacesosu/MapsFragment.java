@@ -63,6 +63,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private LatLng mDefaultLocation;
     private static final int REQUEST_LOCATION_PERMISSIONS = 0;
     private boolean mLocationPermissionGranted = false;
+    private final Map<Marker, Map<String, Object>> markersMap = new HashMap<>();
 
     private SpaceInfoFragment currentSpaceInfoFrag;
     private boolean mReady = false;
@@ -212,8 +213,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         mMap = googleMap;
 
-        final Map<Marker, Map<String, Object>> markersMap = new HashMap<>();
-
         mDatabase.collection("study area").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -279,7 +278,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 intent.putExtra("longitude", lng);
 
                 intent.setClass(getContext(), AddSpaceActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 43);
             }
         });
 
@@ -320,6 +319,29 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
         else{
             return mLocationPermissionGranted;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 43) {
+            if (resultCode == 0) {
+                if(mMap != null) {
+                    HashMap<String, Object> markerData = (HashMap) data.getSerializableExtra("markerData");
+
+                    double lat = (double) markerData.get("latitude");
+                    double lng = (double) markerData.get("longitude");
+                    LatLng pos = new LatLng(lat, lng);
+
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title((String) markerData.get("Name")));
+
+                    markerData.put("Coordinates", pos);
+
+                    markersMap.put(marker, markerData);
+                }
+            }
         }
     }
 }

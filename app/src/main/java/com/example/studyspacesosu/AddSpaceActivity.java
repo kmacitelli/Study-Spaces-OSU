@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -83,6 +84,10 @@ public class AddSpaceActivity extends AppCompatActivity {
                     int rating = 0;
                     studyArea.put("up rating", rating);
                     studyArea.put("down rating", rating);
+                    final HashMap<String, Object> markerData = new HashMap<>(studyArea);
+                    markerData.put("latitude", mClickPosition.latitude);
+                    markerData.put("longitude", mClickPosition.longitude);
+                    markerData.remove("Coordinates");
                     mDatabase.collection("study area")
                             .add(studyArea)
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -90,6 +95,14 @@ public class AddSpaceActivity extends AppCompatActivity {
                                 public void onSuccess(DocumentReference documentReference) {
                                     Log.d("DocumentAdd", "DocumentSnapshot added with ID: " + documentReference.getId());
                                     Toast.makeText(AddSpaceActivity.this, "Area Added Successfully.", Toast.LENGTH_SHORT).show();
+
+                                    markerData.put("Id", documentReference.getId());
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("markerData", (HashMap) markerData);
+                                    setResult(0, intent);
+                                    finish();
+
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

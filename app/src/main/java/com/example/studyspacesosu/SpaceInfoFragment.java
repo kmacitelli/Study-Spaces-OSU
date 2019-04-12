@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +50,7 @@ public class SpaceInfoFragment extends Fragment {
     private ViewGroup mContainer;
     private Fragment mFragment;
     private Context mContext;
+    private Boolean mMapNeedsUpdate = false;
 
     View editSpaceView;
 
@@ -112,14 +114,19 @@ public class SpaceInfoFragment extends Fragment {
 
         editButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(editIntent);
+                startActivityForResult(editIntent, 43);
+                //exitFragment();
             }
         });
 
         xButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                FragmentManager fm = getFragmentManager();
-                fm.beginTransaction().remove(mFragment).commit();
+
+                if (mMapNeedsUpdate) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.refreshMap();
+                }
+                exitFragment();
             }
         });
         favoriteButton.setOnClickListener(new View.OnClickListener() {
@@ -273,4 +280,30 @@ public class SpaceInfoFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    private void exitFragment() {
+        getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 43) {
+            if (resultCode == 0) {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.refreshMap();
+                exitFragment();
+            } else if (resultCode == 1) {
+                Map<String, Object> updatedFields = (HashMap) data.getSerializableExtra("DataMap");
+
+                mAreaName.setText(updatedFields.get("Name").toString());
+                mAreaDescription.setText(updatedFields.get("Description").toString());
+
+                setEditIntent(data);
+                mMapNeedsUpdate = true;
+            }
+        }
+    }
 }
+
