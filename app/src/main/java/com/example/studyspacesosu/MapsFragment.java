@@ -107,8 +107,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     @Override
+    public void onPause() {
+        Log.i("Map", "Map fragment OnPause called");
+        mView.onPause();
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
         Log.i("Map", "Map fragment OnResume called");
+        mView.onResume();
         super.onResume();
     }
 
@@ -117,6 +125,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         Log.i("Map", "Map fragment OnStart called");
         getActivity().invalidateOptionsMenu();
         mApiClient.connect();
+        mView.onStart();
         super.onStart();
     }
 
@@ -124,7 +133,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     public void onStop() {
         Log.i("Map", "Map fragment OnStop called");
         mApiClient.disconnect();
+        mView.onStop();
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i("Map", "Map fragment OnDestroy called");
+        mView.onDestroy();
+        super.onDestroy();
     }
 
     public void findLocation() {
@@ -327,7 +344,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 43) {
-            if (resultCode == 0) {
+            if (resultCode == 44) {
                 if(mMap != null) {
                     HashMap<String, Object> markerData = (HashMap) data.getSerializableExtra("markerData");
 
