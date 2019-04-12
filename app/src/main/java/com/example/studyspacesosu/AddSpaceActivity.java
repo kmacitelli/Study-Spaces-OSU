@@ -100,7 +100,7 @@ public class AddSpaceActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent();
                                     intent.putExtra("markerData", (HashMap) markerData);
-                                    setResult(0, intent);
+                                    setResult(44, intent);
                                     finish();
 
                                 }

@@ -290,11 +290,10 @@ public class SpaceInfoFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 43) {
-            if (resultCode == 0) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.refreshMap();
+            if (resultCode == 46) {
+                ((MainActivity) getActivity()).refreshMap();
                 exitFragment();
-            } else if (resultCode == 1) {
+            } else if (resultCode == 45) {
                 Map<String, Object> updatedFields = (HashMap) data.getSerializableExtra("DataMap");
 
                 mAreaName.setText(updatedFields.get("Name").toString());

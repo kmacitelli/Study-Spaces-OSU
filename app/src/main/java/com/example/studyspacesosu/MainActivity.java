@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FilterFragment.OnFilterUpdateListener {
 
     private int mMapID;
+    private NavigationView mNavView;
+    private Toolbar mToolbar;
+    private MapsFragment mMapFrag;
 
     @Override
     public void onAttachFragment(Fragment fragment) {
@@ -56,21 +59,21 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavView = (NavigationView) findViewById(R.id.nav_view);
+        mNavView.setNavigationItemSelectedListener(this);
         
-        SupportMapFragment mapFragment = new MapsFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mapFragment).commit();
-        mMapID = mapFragment.getId();
+        mMapFrag = new MapsFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.mapFrame, mMapFrag).commit();
+        mMapID = mMapFrag.getId();
 
 
     }
@@ -110,6 +113,11 @@ public class MainActivity extends AppCompatActivity
         }
 
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
 
@@ -210,15 +218,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void refreshMap() {
-        SupportMapFragment mapFragment = new MapsFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mapFragment).commit();
+        getSupportFragmentManager().beginTransaction().remove(mMapFrag).commit();
+        mMapFrag = new MapsFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mapFrame, mMapFrag).commit();
     }
-
-    public void refreshInfo(Intent data) {
-        FragmentManager fm = getSupportFragmentManager();
-        SpaceInfoFragment newFragment = new SpaceInfoFragment();
-        newFragment.setEditIntent(data);
-        fm.beginTransaction().add(R.id.infoSpace, newFragment).commit();
-    }
-
 }

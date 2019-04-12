@@ -90,7 +90,7 @@ public class EditSpaceActivity extends AppCompatActivity {
                                     Intent intent = new Intent();
                                     intent.putExtra("DataMap", (HashMap) updatedInfo);
 
-                                    setResult(1, intent);
+                                    setResult(45, intent);
                                     finish();
                                 }
                             });
@@ -119,7 +119,7 @@ public class EditSpaceActivity extends AppCompatActivity {
                                     Log.d("EditSpace", "DocumentSnapshot successfully deleted!");
                                     Toast.makeText(EditSpaceActivity.this, "Area Deleted Successfully.", Toast.LENGTH_SHORT).show();
 
-                                    setResult(0);
+                                    setResult(46);
                                     finish();
 
                                 }

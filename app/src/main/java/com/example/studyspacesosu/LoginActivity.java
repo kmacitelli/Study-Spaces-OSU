@@ -417,7 +417,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     } else {
 
                             // If sign in fails, display a message to the user.
-
+                            showProgress(false);
                             mPasswordView.setError(getString(R.string.error_incorrect_password));
                             mPasswordView.requestFocus();
                     }
